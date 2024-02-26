@@ -1,15 +1,23 @@
 package com.devstack.HealthCare.System.api;
 
 import com.devstack.HealthCare.System.dto.request.RequestDoctorDto;
-import org.apache.tomcat.util.http.parser.MediaType;
+import com.devstack.HealthCare.System.service.DoctorService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/doctors")/*doctores wala s akura ona*/
 public class DoctorController {
+
+    private final DoctorService doctorService;
+
+    public DoctorController(DoctorService doctorService) {
+        this.doctorService = doctorService;
+    }
+
     @PostMapping
     public String  createDoctor(@RequestBody RequestDoctorDto doctorDto  ){
-        return doctorDto.toString();
+        doctorService.createDoctor(doctorDto);
+        return doctorDto.getName();
     }
 
 
