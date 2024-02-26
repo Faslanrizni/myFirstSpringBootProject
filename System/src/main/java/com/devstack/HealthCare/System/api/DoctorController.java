@@ -2,6 +2,10 @@ package com.devstack.HealthCare.System.api;
 
 import com.devstack.HealthCare.System.dto.request.RequestDoctorDto;
 import com.devstack.HealthCare.System.service.DoctorService;
+import com.devstack.HealthCare.System.util.StandardResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,9 +19,12 @@ public class DoctorController {
     }
 
     @PostMapping
-    public String  createDoctor(@RequestBody RequestDoctorDto doctorDto  ){
+    public ResponseEntity<StandardResponse> createDoctor(@RequestBody RequestDoctorDto doctorDto  ){
         doctorService.createDoctor(doctorDto);
-        return doctorDto.getName();
+        return new ResponseEntity<>(
+                new StandardResponse(201,"doctor saved",doctorDto.getName()),
+                HttpStatus.CREATED
+        );
     }
 
 
