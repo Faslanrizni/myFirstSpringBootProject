@@ -1,12 +1,10 @@
 package com.devstack.HealthCare.System.dto.response;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 
 @Data
 public class ResponseDoctorDto {

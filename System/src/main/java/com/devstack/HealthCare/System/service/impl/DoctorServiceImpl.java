@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,12 +41,33 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public ResponseDoctorDto getDoctor(long id) {
-        return null;
+        Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
+        if(selectedDoctor.isPresent()){
+            throw new RuntimeException("Doctor nit found");
+        }
+
+        Doctor doc = selectedDoctor.get();
+        return new ResponseDoctorDto(
+                doc.getId(),doc.getName(),doc.getAddress(),doc.getContact(),doc.getSalary()
+        ){
+
+        };
     }
 
     @Override
     public void deleteDoctor(long id) {
+        Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
+        if(selectedDoctor.isPresent()){
+            throw new RuntimeException("Doctor nit found");
+        }
 
+       doctorRepo.deleteById(selectedDoctor.get().getId());
+    }
+
+    @Override
+    public List<ResponseDoctorDto> findDoctorsByName(String name) {
+        List<Doctor> allByName = doctorRepo.findAllByName(name);
+        return null;
     }
 
     @Override
