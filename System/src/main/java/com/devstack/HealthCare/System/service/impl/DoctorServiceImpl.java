@@ -45,14 +45,16 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public ResponseDoctorDto getDoctor(long id) {
         Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
-        if(selectedDoctor.isPresent()){
-            throw new RuntimeException("Doctor nit found");
+        if(selectedDoctor.isEmpty()){
+            throw new RuntimeException("Doctor not found");
         }
 
         Doctor doc = selectedDoctor.get();
         return new ResponseDoctorDto(
-                doc.getId(),doc.getName(),doc.getAddress(),doc.getContact(),doc.getSalary()
+                doc.getId(),doc.getName(),
+                doc.getAddress(),doc.getContact(),doc.getSalary()
         ){
+
 
         };
     }
