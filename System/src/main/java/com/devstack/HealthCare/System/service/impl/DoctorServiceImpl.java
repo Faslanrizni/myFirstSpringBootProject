@@ -4,13 +4,14 @@ import com.devstack.HealthCare.System.dto.request.RequestDoctorDto;
 import com.devstack.HealthCare.System.dto.response.ResponseDoctorDto;
 import com.devstack.HealthCare.System.dto.response.paginated.PaginatedDoctorResponseDto;
 import com.devstack.HealthCare.System.entity.Doctor;
+import com.devstack.HealthCare.System.exception.EntryNotFoundException;
 import com.devstack.HealthCare.System.repo.DoctorRepo;
 import com.devstack.HealthCare.System.service.DoctorService;
+import com.devstack.HealthCare.System.util.mapper.DoctorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +22,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepo doctorRepo;
 
+    private final DoctorMapper doctorMapper;
 
     @Autowired /*injecting*/
-    public DoctorServiceImpl(DoctorRepo doctorRepo) {
+    public DoctorServiceImpl(DoctorRepo doctorRepo, DoctorMapper doctorMapper) {
         this.doctorRepo = doctorRepo;
+        this.doctorMapper = doctorMapper;
     }
 
     @Override
@@ -50,21 +53,20 @@ public class DoctorServiceImpl implements DoctorService {
             throw new RuntimeException("Doctor not found");
         }
 
-        Doctor doc = selectedDoctor.get();
-        return new ResponseDoctorDto(
+//        Doctor doc = selectedDoctor.get();
+        return doctorMapper.toResponseDoctorDto(selectedDoctor.get());
+        /*return new ResponseDoctorDto(
                 doc.getId(),doc.getName(),
                 doc.getAddress(),doc.getContact(),doc.getSalary()
-        ){
+        ){*/
 
-
-        };
     }
 
     @Override
     public void deleteDoctor(long id) {
         Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
         if(selectedDoctor.isPresent()){
-            throw new RuntimeException("Doctor nit found");
+            throw new EntryNotFoundException("Doctor nit found");
         }
 
        doctorRepo.deleteById(selectedDoctor.get().getId());
@@ -80,7 +82,7 @@ public class DoctorServiceImpl implements DoctorService {
     public void updateDoctor(long id, RequestDoctorDto dto) {
         Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
         if(selectedDoctor.isEmpty()){
-            throw new RuntimeException("Doctor nit found");
+            throw new EntryNotFoundException("Doctor nit found");
         }
         Doctor doc = selectedDoctor.get();
         doc.setName(dto.getName());
@@ -97,15 +99,17 @@ public class DoctorServiceImpl implements DoctorService {
         searchText= "%"+searchText+"%";
         List<Doctor> doctors = doctorRepo.searchDoctors(searchText, PageRequest.of(page, size));
         long doctorCount  = doctorRepo.countDoctors(searchText);
-        List<ResponseDoctorDto> dtos =new ArrayList<>();
-        doctors.forEach(doc ->{
+        List<ResponseDoctorDto> dtos = doctorMapper.toResponseDoctorDtoList(doctors);
+
+        /*doctors.forEach(doc ->{
             dtos.add(
+
                     new ResponseDoctorDto(
                             doc.getId(),doc.getName(),
                             doc.getAddress(),doc.getContact(),doc.getSalary()
                     )
             );
-        });
+        });*/
         return new PaginatedDoctorResponseDto(
                 doctorCount,
                 dtos
