@@ -27,8 +27,6 @@ public class DoctorController {
         );
     }
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<StandardResponse>  findDoctor(@PathVariable long id){
         return new ResponseEntity<>(
@@ -39,29 +37,41 @@ public class DoctorController {
 
     /*localhost:8000/api/v1/doctors?id=S-HC-D-1*/
     @PutMapping(params = "id")
-    public String  updateDoctor(
-            @RequestParam String id,
+    public ResponseEntity<StandardResponse>  updateDoctor(
+            @RequestParam long id,
             @RequestBody RequestDoctorDto doctorDto ){
-        return doctorDto.toString()
-                ;
+        doctorService.updateDoctor(id,doctorDto);
+        return new ResponseEntity<>(
+                new StandardResponse(201,"update data",doctorDto.getName()),
+                HttpStatus.CREATED
+        );
     }
 
     /*localhost:8000/api/v1/doctors/S-HC-D-1*/
     @DeleteMapping("/{id}") /*we putting curly brackets here because of path variable*/
-    public String  deleteDoctor(@PathVariable String id){
-        return "deleteDoctor";
+    public ResponseEntity<StandardResponse>  deleteDoctor(@PathVariable long id){
+        doctorService.deleteDoctor(id);
+        return new ResponseEntity<>(
+                new StandardResponse(204,"deleted data",id),
+                HttpStatus.NO_CONTENT
+        );
     }
 
     /*localhost:8000/api/v1/doctors/list?searchText=Nimal&page=0&size=10*/
     @GetMapping(path = "/list",params = {"searchText","page","size"}) /*if we didnnt pu t path error will occure3 that tell get method has duplicate*/
-    public String  findAllDoctor(
+    public ResponseEntity<StandardResponse>  findAllDoctor(
             @RequestParam String searchText,
             @RequestParam int page,
             @RequestParam int size
     ){
 
 
-        return "createDoctor";
+        return new ResponseEntity<>(
+                new StandardResponse(204,"deleted data",doctorService.getAllDoctor(
+                        searchText,page,size
+                )),
+                HttpStatus.OK
+        );
     }
 
 }

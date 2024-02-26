@@ -2,6 +2,7 @@ package com.devstack.HealthCare.System.service.impl;
 
 import com.devstack.HealthCare.System.dto.request.RequestDoctorDto;
 import com.devstack.HealthCare.System.dto.response.ResponseDoctorDto;
+import com.devstack.HealthCare.System.dto.response.paginated.PaginatedDoctorResponseDto;
 import com.devstack.HealthCare.System.entity.Doctor;
 import com.devstack.HealthCare.System.repo.DoctorRepo;
 import com.devstack.HealthCare.System.service.DoctorService;
@@ -92,9 +93,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<ResponseDoctorDto> getAllDoctor(String searchText, int page, int size) {
+    public PaginatedDoctorResponseDto getAllDoctor(String searchText, int page, int size) {
         searchText= "%"+searchText+"%";
         List<Doctor> doctors = doctorRepo.searchDoctors(searchText, (Pageable) PageRequest.of(page, size));
+        long doctorCount  = doctorRepo.countDoctors(searchText);
         List<ResponseDoctorDto> dtos =new ArrayList<>();
         doctors.forEach(doc ->{
             dtos.add(
@@ -104,6 +106,9 @@ public class DoctorServiceImpl implements DoctorService {
                     )
             );
         });
-        return dtos;
+        return new PaginatedDoctorResponseDto(
+                doctorCount,
+                dtos
+        );
     }
 }
