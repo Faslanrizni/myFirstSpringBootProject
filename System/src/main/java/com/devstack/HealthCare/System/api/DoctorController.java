@@ -37,12 +37,13 @@ public class DoctorController {
 
     /*localhost:8000/api/v1/doctors?id=S-HC-D-1*/
     @PutMapping(params = "id")
-    public ResponseEntity<StandardResponse>  updateDoctor(
+    public ResponseEntity<StandardResponse> updateDoctor(
             @RequestParam long id,
-            @RequestBody RequestDoctorDto doctorDto ){
+            @RequestBody RequestDoctorDto doctorDto
+    ){
         doctorService.updateDoctor(id,doctorDto);
         return new ResponseEntity<>(
-                new StandardResponse(201,"update data",doctorDto.getName()),
+                new StandardResponse(201,"update data!",doctorDto.getName()),
                 HttpStatus.CREATED
         );
     }

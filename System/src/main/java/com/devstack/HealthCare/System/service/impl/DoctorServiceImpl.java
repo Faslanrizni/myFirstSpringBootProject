@@ -79,7 +79,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void updateDoctor(long id, RequestDoctorDto dto) {
         Optional<Doctor> selectedDoctor = doctorRepo.findById(id);
-        if(selectedDoctor.isPresent()){
+        if(selectedDoctor.isEmpty()){
             throw new RuntimeException("Doctor nit found");
         }
         Doctor doc = selectedDoctor.get();
@@ -95,7 +95,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public PaginatedDoctorResponseDto getAllDoctor(String searchText, int page, int size) {
         searchText= "%"+searchText+"%";
-        List<Doctor> doctors = doctorRepo.searchDoctors(searchText, (Pageable) PageRequest.of(page, size));
+        List<Doctor> doctors = doctorRepo.searchDoctors(searchText, PageRequest.of(page, size));
         long doctorCount  = doctorRepo.countDoctors(searchText);
         List<ResponseDoctorDto> dtos =new ArrayList<>();
         doctors.forEach(doc ->{
